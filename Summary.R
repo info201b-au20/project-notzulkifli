@@ -1,6 +1,6 @@
 library(tidyverse)
 hospitals <- read.csv("Hospitals.csv")
-county <- read.csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv")#Number of unique ownership for hospitals in WA:
+county <- read.csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv")
 
 #Toal unique number of ownerships of hospitals in WA
 WA_owners <- hospitals %>%
