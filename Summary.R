@@ -2,6 +2,7 @@ library(tidyverse)
 hospitals <- read.csv("Hospitals.csv")
 county <- read.csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv")#Number of unique ownership for hospitals in WA:
 
+#Toal unique number of ownerships of hospitals in WA
 WA_owners <- hospitals %>%
     filter(STATE == "WA") %>%
     group_by(OWNER, COUNTY) %>%
@@ -16,6 +17,7 @@ WA_hospitals <- hospitals %>%
 WA_hospitals <- WA_hospitals %>%
     mutate("County" = str_to_sentence(WA_hospitals$COUNTY, locale = "en"))
 mean(WA_hospitals$`length(COUNTY)`)
+
 #Median number of hospitals in WA counties:
 median(WA_hospitals$`length(COUNTY)`)
 
