@@ -1,9 +1,8 @@
 library(tidyverse)
 library(ggplot2)
 library(stringr)
-library(readxl)
 
-washington_history <- read_excel("C:/Users/themo/Desktop/INFO 201/washington-history.xlsx")
+washington_history <- read.csv("https://covidtracking.com/data/download/washington-history.csv")
 
 ggplot(data = washington_history) +
   geom_point(mapping = aes(x = positive, y = hospitalizedCurrently)) +
