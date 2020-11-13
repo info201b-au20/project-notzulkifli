@@ -2,7 +2,7 @@ library(tidyverse)
 hospitals <- read.csv("Hospitals.csv")
 county <- read.csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv")
 
-#Total unique number of ownerships of hospitals in WA
+#Toal unique number of ownerships of hospitals in WA
 WA_owners <- hospitals %>%
     filter(STATE == "WA") %>%
     group_by(OWNER, COUNTY) %>%
