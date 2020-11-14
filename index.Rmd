@@ -2,7 +2,7 @@
 title: "Washington State Health and Resources"
 output: html_document
 ---
-"In the Markdown document you create, you should run the other scripts to generate the necessary content your report:
+In the Markdown document you create, you should run the other scripts to generate the necessary content your report:
 
 __Write an introductory paragraph explaining the domain/data set (feel free to borrow from the project proposal)__
 - Our dataset is used to recognize differing COVID-19 datasets across counties in Washington State. We are attempting to analyze the differing number of cases, hospitalizations, and number of hospitals in counties with varying populations, demographics, and incomes. With this we intend to analyze which counties may have disadvantages over others when it comes to dealing with COVID, due to differing levels of access to healthcare resources per county. This helps meet our overarching goal of combating health disparities in Washington State by providing dataset analyses comparing how COVID has impacted different people and cities.
@@ -10,10 +10,15 @@ __Write an introductory paragraph explaining the domain/data set (feel free to b
 __Write a summary paragraph that includes information calculated by your summary information function__
 * Using data from the Department of Homeland Security and the New York Times, we determined that receiving information on hospitals and relating information (such as number of beds or any pertinent information on the hospital) would be best for our analysis on the state of Washington. We calculated the total unique type of ownership a hospital in WA could have (6), we also calculated the mean (3.667) and median (2) amount of hospitals in each county from the data given. We found that there were 36 counties in WA with at least one hospital, and there are 39 counties total meaning 3 counties have no hospitals at all. We also provided a box and whisker plot for the number of hospitals per county, a scatterplot for the number of positive COVID cases vs current number of hospitalizations, and a bar chart of the number of hospitals vs number of deaths. We believed that calculating these values are most pertinent for us to determine the degree to which COVID-19 has affected the state of Washington.
 
+__Render your table and describe pertinent observations found in it__
+* The information provided on the table below gives the mean, median and most numbers of hospitals in the state of Washington. These numbers are most apparent with the mean number of hospitals per county with 3.67, the median number of hospitals per county 2, the highest number of hospital in a county with 32, and the total amount of counties in Washington being 36. On the 1st column, every county with a hospital is named out.
+
+#Table is on Aggregate Table.R File, function hospitals_summary
+
 __Describe the purpose of each chart (e.g., this chart was intended to show the relationship between...), render each chart, and describe pertinent observations found in each chart__
 * __*Chart 1* Number of Hospitals per county:__
   * This chart is meant to show the clear discrepancy between King County with more than 30 hospitals present within the county and the other counties in the state which have significantly fewer. As a result, people in those other counties would be at more of a disadvantage in terms of treatment options were they to fall sick. We have also added in a 5 number summary to better represent this data and make the data more visual.
-```{r echo=FALSE}
+```{r, echo = FALSE}
 library(dplyr)
 setwd("C:/Users/yungu/Desktop/info_201/project-notzulkifli/scripts")
 Hospitals <- read.csv("Hospitals.csv")
@@ -35,7 +40,7 @@ text(x=fivenum(total_counties$count), labels =fivenum(total_counties$count), y=1
 * __*Chart 2* Number Of Positive COVID cases vs Current number of hospitalizations:__
   * This scatterplot shows the relationship between the increasing number of positive cases of COVID-19 in Washington compared to the current number of hospitalizations on that date. Some observations to be noted are the spike in the scatterplot in the beginning of the pandemic as many people were exposed to the virus due to lack of social distancing. This led both the number of cases and hospitalizations to spike. However, we can see midway through the graph the number of cases and hospitalizations diminish as quarantine protocols are put in place but spike again as people start to let up on social distancing later on.
   
-```{r echo=FALSE}
+```{r, echo = FALSE}
 library(ggplot2)
 washington_history <- read.csv("https://covidtracking.com/data/download/washington-history.csv")
 
@@ -47,9 +52,9 @@ ggplot(data = washington_history) +
 ```
 
 * __*Chart 3* Number of Hospitals vs Number of Deaths__
-  * This bar graph is meant to compare the number of deaths each county had compared with the number of hospitals in the county. This may indicate a correlation in that counties with fewer hospitals such as Yakima County which did not have as many hospitals (i.e. resources) but had the second highest number of deaths in the state."
+  * This bar graph is meant to compare the number of deaths each county had compared with the number of hospitals in the county. This may indicate a correlation in that counties with fewer hospitals such as Yakima County which did not have as many hospitals (i.e. resources) but had the second highest number of deaths in the state.
 
-```{r echo=FALSE}
+```{r, echo = FALSE}
 library(tidyverse)
 setwd("C:/Users/yungu/Desktop/info_201/project-notzulkifli/scripts")
 hospitals <- read.csv("Hospitals.csv")
