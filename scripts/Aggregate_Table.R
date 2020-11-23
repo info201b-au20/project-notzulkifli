@@ -24,3 +24,5 @@ hospital_summary <- hospitals %>%
   summarize(total_beds = sum(BEDS)) %>%
   arrange(-total_beds) %>%
   top_n(10)
+
+kable(hospital_summary)
