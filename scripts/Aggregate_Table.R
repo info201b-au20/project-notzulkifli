@@ -1,4 +1,6 @@
 library(tidyverse)
+library(knitr)
+library(tidyr)
 hospitals <- read.csv("Hospitals.csv")
 county <- read.csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv")
 
@@ -15,17 +17,10 @@ beds_per_county <- hospitals %>%
   summarise("Number of beds" = max(BEDS))
 
 #Table of Hospital Summary
-hospital_summary <- hospitals %>% 
-  filter(STATE == "WA") %>% 
-  summarize(
-    number_of_beds = beds_per_county,
-    WA_hospitals = WA_hospitals$`Number of hospitals`,
-  )
-
-table(hospital_summary)
-
-
-
-
-
-  
+hospital_summary <- hospitals %>%
+  filter(STATE == "WA") %>%
+  select(COUNTY, BEDS) %>% 
+  group_by(COUNTY) %>% 
+  summarize(total_beds = sum(BEDS)) %>%
+  arrange(-total_beds) %>%
+  top_n(10)
