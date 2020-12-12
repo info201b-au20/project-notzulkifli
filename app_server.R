@@ -8,7 +8,7 @@ library(ggplot2)
 # Load in the data
 RaceData <- read.csv("scripts/Data.csv", stringsAsFactors = FALSE)
 hospitals <- read.csv("scripts/Hospitals.csv")
-
+washington_history <- read.csv("https://covidtracking.com/data/download/washington-history.csv")
 # Rishi's Work:
 
 # Variables
@@ -34,12 +34,17 @@ total_hospitalizations <- RaceData %>%
   summarise(total = max(Hosp_Total)) %>%
   pull(total)
 
+total_percent <- as.numeric(total_cases)
+
 # Number of black cases in WA state
 black_cases <- RaceData %>%
   filter(!is.na(Cases_Black)) %>%
   filter((State == "WA")) %>%
   summarise(total = max(Cases_Black)) %>%
   pull(total)
+
+# How many of the total cases are made up by black people in WA state
+black_cases_percent <- trunc(black_cases / total_percent * 100)
 
 # Number of black deaths in WA state
 black_deaths <- RaceData %>%
@@ -63,6 +68,8 @@ white_cases <- RaceData %>%
   summarise(total = max(Cases_White)) %>%
   pull(total)
 
+white_percent <- as.numeric(white_cases)
+
 # Number of white deaths in WA state
 white_deaths <- RaceData %>%
   filter((State == "WA")) %>%
@@ -76,6 +83,11 @@ white_hospitalizations <- RaceData %>%
   filter((State == "WA")) %>%
   summarise(total = max(Hosp_White)) %>%
   pull(total)
+
+
+# How many of the total cases are made up by white people in WA state
+white_cases_percent <- trunc(white_percent / total_percent * 100)
+
 
 # Number of LatinX cases in WA state
 latinx_cases <- RaceData %>%
@@ -98,6 +110,9 @@ latinx_hospitalizations <- RaceData %>%
   summarise(total = max(Hosp_LatinX)) %>%
   pull(total)
 
+# How many of the total cases are made up by LatinX people in WA state
+latinx_cases_percent <- trunc(latinx_cases / total_percent * 100)
+
 # Number of Asian cases in WA state
 asian_cases <- RaceData %>%
   filter((State == "WA")) %>%
@@ -118,6 +133,9 @@ asian_hospitalizations <- RaceData %>%
   filter((State == "WA")) %>%
   summarise(total = max(Hosp_Asian)) %>%
   pull(total)
+
+# How many of the total cases are made up by Asian people in WA state
+asian_cases_percent <- trunc(asian_cases / total_percent * 100)
 
 # Number of American Indian or Alaskan Native cases in WA state
 aian_cases <- RaceData %>%
@@ -140,6 +158,10 @@ aian_hospitalizations <- RaceData %>%
   summarise(total = max(Hosp_AIAN)) %>%
   pull(total)
 
+# How many of the total cases are made up by American Indian or Alaskan Native
+# people in WA state
+aian_cases_percent <- trunc(aian_cases / total_percent * 100)
+
 # Number of Native Hawaiian and Pacific Islander cases in WA state
 nhpi_cases <- RaceData %>%
   filter((State == "WA")) %>%
@@ -160,6 +182,11 @@ nhpi_hospitalizations <- RaceData %>%
   filter((State == "WA")) %>%
   summarise(total = max(Hosp_NHPI)) %>%
   pull(total)
+
+# How many of the total cases are made up by Native Hawaiian and Pacific
+# Islander people in WA state
+nhpi_cases_percent <- trunc(nhpi_cases / total_percent * 100)
+
 
 races <- function(race) {
   df <- filter(RaceData, State == "WA")
@@ -194,6 +221,46 @@ WA_owners <- hospitals %>%
   summarize(length(COUNTY))
 names(WA_owners)[names(WA_owners) == "length(COUNTY)"] <- "Hospitals"
 
+WA_hospitals <- hospitals %>%
+  filter(STATE == "WA") %>%
+  group_by(OWNER) %>%
+  summarize(length(OWNER))
+names(WA_hospitals)[names(WA_hospitals) == "length(OWNER)"] <- "Number of Hospitals"
+
+
+# Peyton's Work:
+wa_covid <- washington_history %>%
+  select(positive, hospitalizedCurrently, date) %>%
+  drop_na()
+
+date_range <- c(min(wa_covid$date), max(wa_covid$date))
+
+# Zulkifli's Work:
+top_10_beds_county <- hospitals %>%
+  filter(STATE == "WA") %>%
+  select(COUNTY, BEDS) %>%
+  group_by(COUNTY) %>%
+  summarize(total_beds = sum(BEDS)) %>%
+  arrange(-total_beds) %>%
+  top_n(10)
+
+percentage_of_cases_race <- list(
+  Black = black_cases_percent,
+  White = white_cases_percent,
+  Latinx = latinx_cases_percent,
+  Asian = asian_cases_percent,
+  AIAN = aian_cases_percent,
+  NHPI = nhpi_cases_percent
+)
+
+df_percentage_cases_race <- enframe(percentage_of_cases_race)
+names(df_percentage_cases_race)[names(
+  df_percentage_cases_race
+) == "name"] <- "Race"
+names(df_percentage_cases_race)[names(
+  df_percentage_cases_race
+) == "value"] <- "Percentage of Cases in WA"
+
 
 # Define server function
 server <- function(input, output) {
@@ -203,6 +270,31 @@ server <- function(input, output) {
 
   output$analysis <- renderText({
     # paste0("")
+  })
+
+  output$hospitalizations <- renderPlotly({
+    plot <- wa_covid %>%
+      filter(date >= input$choose_date[1], date <= input$choose_date[2])
+
+    ggplot(plot) +
+      geom_point(mapping = aes(x = positive, y = hospitalizedCurrently)) +
+      geom_smooth(mapping = aes(x = positive, y = hospitalizedCurrently)) +
+      labs(
+        title = "Positive COVID Cases vs Current Hospitalizations",
+        x = "Positive Cases", y = "Current Hospitalizations"
+      )
+  })
+
+  output$df_percentage_cases_race <- renderDataTable({
+    df_percentage_cases_race
+  })
+
+  output$top_10_beds_county <- renderDataTable({
+    top_10_beds_county
+  })
+
+  output$WA_hospitals <- renderDataTable({
+    WA_hospitals
   })
 
   output$boxplot <- renderPlotly({
