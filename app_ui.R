@@ -1,6 +1,7 @@
 # ui.R
 # Load in libraries
 library(shiny)
+library(tidyverse)
 library(plotly)
 library(ggplot2)
 library(RColorBrewer)
@@ -22,6 +23,10 @@ wa_max_date <- washington_history %>%
   filter(!is.na(date)) %>%
   filter(date == max(date)) %>%
   pull(date)
+
+wa_covid <- washington_history %>%
+  select(positive, hospitalizedCurrently, date) %>%
+  drop_na()
 
 date_range <- c(min(wa_covid$date), max(wa_covid$date))
 
@@ -84,7 +89,7 @@ ui <- fluidPage(
                  ethnicities/races that lead them to have poor healthcare as
                  compared to others?"),
           br(),
-          strong("Is there a correaltion between the number of hospitalization
+          strong("Is there a correlation between the number of hospitalization
           and number of COVID cases in Washington?"),
           br(),
           strong("How many and what types of hospitals are in the counties

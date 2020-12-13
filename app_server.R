@@ -9,6 +9,7 @@ library(ggplot2)
 RaceData <- read.csv("scripts/Data.csv", stringsAsFactors = FALSE)
 hospitals <- read.csv("scripts/Hospitals.csv")
 washington_history <- read.csv("https://covidtracking.com/data/download/washington-history.csv")
+
 # Rishi's Work:
 
 # Variables
